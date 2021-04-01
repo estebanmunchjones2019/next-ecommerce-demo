@@ -1,65 +1,77 @@
-import Head from 'next/head'
+// import styles below, scoped to this component
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
+import { getProducts } from '../actions'
+import { useState } from 'react'
+import axios from 'axios'
+import Subscription from '../components/subscription'
+
+export default function Home({products}) {
+  const [email, setEmail] = useState('');
+
+  const inputChangeHandler = (event) => {
+    const value = event.target.value
+    setEmail(value)
+  }
+
+  const subscribeHandler = async () => {
+    const subscriptionRes = await axios.post('http://localhost:3000/api/subscription', {email});
+    alert(`${subscriptionRes.data.text}`);
+    setEmail('');
+  }
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+    <div className="container pt-5">
+      <h1 className="text-center pb-3">Tea & Coffee shop</h1>
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
-
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+      {/* Products section starts */}
+      <section>
+        <div className="row">
+          <Products products={products}/>
         </div>
-      </main>
+      </section>
+      {/* Products section ends */}
 
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
+      {/* Subscribe section starts */}
+      <section>
+        <div className="row pb-5">
+          <div className="col">
+         <Subscription
+         email={email}
+         inputChangeHandler={inputChangeHandler}
+         subscribeHandler={subscribeHandler}
+          />  
+          </div>
+        </div>
+      </section>
+      {/* Subscribe section ends */}
+
     </div>
+    </>
   )
 }
+
+// use getStaticProps whenever possible, so the content is pre-rendered at build time.
+export async function getStaticProps(){
+  const products = await getProducts();
+  return {
+    props: {
+      products
+    }
+  }
+}
+
+// use getServerSideProps when data changes a lot and you need to get fresh content.
+// The content is pre-rendered on the server side upon the client's request. 
+// This is a slower option. If you uncomment this, and comment getStaticProps, the app
+// should still work
+// export async function getServerSideProps(){
+//   const products = await getProducts();
+//   return {
+//     props: {
+//       products
+//     }
+//   }
+// }
+
