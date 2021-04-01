@@ -16,7 +16,8 @@ export default function Home({products}) {
   }
 
   const subscribeHandler = async () => {
-    const subscriptionRes = await axios.post('http://localhost:3000/api/subscription', {email});
+    // const subscriptionRes = await axios.post('http://localhost:3000/api/subscription', {email});
+    const subscriptionRes = await axios.post('https://next-ecommerce-demo.vercel.app/api/subscription', {email});
     alert(`${subscriptionRes.data.text}`);
     setEmail('');
   }
