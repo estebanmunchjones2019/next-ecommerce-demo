@@ -5,6 +5,7 @@ import { getProducts } from '../actions'
 import { useState } from 'react'
 import axios from 'axios'
 import Subscription from '../components/subscription'
+import Products from '../components/products'
 
 export default function Home({products}) {
   const [email, setEmail] = useState('');
